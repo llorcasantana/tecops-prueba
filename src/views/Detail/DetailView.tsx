@@ -30,7 +30,7 @@ export const DetailView: FC<Props> = () => {
     };
     return (
         <>
-            <section className="flex items-center gap-16 px-36 py-20 max-lg:flex-col max-sm:py-0 max-sm:px-0 mb-10">
+            <section className="flex items-center gap-16 px-36 py-20 max-lg:flex-col max-sm:py-0 max-sm:px-0 mb-10 animation__appearIn">
                 <div className="grid grid-cols-1 w-1/2 max-lg:w-10/12 max-sm:h-3/4 max-sm:w-screen max-sm:mb-[-140px]">
                     <img
                         src={product.image}

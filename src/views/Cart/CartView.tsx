@@ -58,7 +58,7 @@ export const CartView: FC<Props> = () => {
 
     return (
         <>
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-8 animation__appearIn">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center">
                     <h1 className="text-2xl font-bold my-4">Carrito</h1>
                 </div>

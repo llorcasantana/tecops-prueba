@@ -13,10 +13,11 @@ export const CartItem: FC<Props> = ({item}) => {
     const navigate = useNavigate();
     return (
             <div
-                className="transition-all rounded-lg border border-gray-200 relative group hover:border hover:border-gray-300 hover:radius-1 w-auto">
+                className="transition-all rounded-lg border border-gray-200 relative group hover:border hover:border-gray-300 hover:radius-1 w-auto animation__appearIn">
                 <div className="cursor-pointer" onClick={()=>navigate('/detail?id='+item.id)}>
                     <div className="overflow-hidden aspect-w-1 aspect-h-1 h-56">
                         <img
+                            loading="lazy"
                             className="overflow-hidden mx-auto w-auto h-full transition-all duration-300 group-hover:scale-125"
                             src={item.image} alt=""/>
                     </div>
