@@ -6,11 +6,18 @@ import {IProduct} from "../../interfaces/apiResponse.ts";
 import {useProducts} from "../../hooks";
 import {Button} from "../../components";
 import { InputMask } from 'primereact/inputmask';
-import {InputText} from "primereact/inputtext";
 import { Toast } from 'primereact/toast';
+import { useForm, SubmitHandler } from "react-hook-form"
 
 interface Props {
     children?: ReactNode
+}
+
+type Inputs = {
+    name: string
+    card: string
+    expDate: string
+    ccv: string
 }
 
 export const ConfirmationView: FC<Props> = () => {
@@ -20,10 +27,16 @@ export const ConfirmationView: FC<Props> = () => {
     const navigate = useNavigate();
     const toast = useRef<Toast>(null);
 
-    const [name, setName] = useState<string | undefined>(undefined);
-    const [card, setCard] = useState<string | undefined>(undefined);
-    const [exp, setExp] = useState<string | undefined>(undefined);
-    const [ccv, setCcv] = useState<string | undefined>(undefined);
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<Inputs>()
+
+    const onSubmit: SubmitHandler<Inputs> = () => {
+        handleFinalize()
+    }
+
 
 
 
@@ -32,15 +45,11 @@ export const ConfirmationView: FC<Props> = () => {
         navigate('/cart')
     }
     const handleFinalize = () => {
-        if(name && card && exp && ccv){
-            toast.current?.show({severity:'success', summary: 'Completado', detail:'Pago completado', life: 3000});
-            setTimeout(()=> {
-                setProductCart([]);
-                navigate('/')
-            }, 3000);
-        }else{
-            toast.current?.show({severity:'error', summary: 'Error', detail:'Todos los campos son requeridos', life: 3000});
-        }
+        toast.current?.show({severity:'success', summary: 'Completado', detail:'Pago completado', life: 3000});
+        setTimeout(()=> {
+            setProductCart([]);
+            navigate('/')
+        }, 3000);
     };
     useEffect(() => {
         if (data.status === 'SUCCESS') {
@@ -65,36 +74,31 @@ export const ConfirmationView: FC<Props> = () => {
                 <div className="mx-auto max-w-5xl">
                     <h1 className="text-2xl font-bold my-4">Completar pago</h1>
 
-                    <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 text-left">
-                        <form action="#"
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="mt-6 sm:mt-8 lg:flex lg:items-start lg:gap-12 text-left">
+                        <div onSubmit={handleSubmit(onSubmit)}
                               className="w-full rounded-lg border border-gray-200 bg-white p-4 shadow-sm  sm:p-6 lg:max-w-xl lg:p-8">
                             <div className="mb-6 grid grid-cols-2 gap-4">
-                                <div className="col-span-2 sm:col-span-1">
-                                    <label htmlFor="full_name"
-                                           className="mb-2 block text-sm font-medium text-gray-900"> Nombre completo* </label>
-                                    <InputText
-                                        id="full_name"
-                                        value={name || ''}
-                                        onChange={(e) => setName(e.target.value as string)}
-                                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500"
-                                        placeholder="Bonnie Green"
-                                        keyfilter="alphanum" />
-                                </div>
 
                                 <div className="col-span-2 sm:col-span-1">
-                                    <label htmlFor="card-number-input"
-                                           className="mb-2 block text-sm font-medium text-gray-900"> Número de tarjeta* </label>
+                                    <label htmlFor="full_name" className="mb-2 block text-sm font-medium text-gray-900"> Nombre completo <span className="text-red-500">*</span> </label>
+                                    <input defaultValue="" {...register("name", { required: true })} className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-primary-500 focus:ring-primary-500 ${errors.name && 'border-red-500'}`}/>
+                                    {errors.name && <span className="text-xs text-red-500">{errors.card?.message}</span>}
+                                </div>
+                                <div className="col-span-2 sm:col-span-1">
+                                    <label htmlFor="full_name" className="mb-2 block text-sm font-medium text-gray-900"> Número de tarjeta <span className="text-red-500">*</span> </label>
+
                                     <InputMask
-                                        value={card || ''}
-                                        onChange={(e) => setCard(e.target.value as string)}
-                                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                        {...register("card", { required: true })}
+                                        className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${errors.card && 'border-red-500'}`}
                                         mask="9999-9999-9999-9999"
                                         placeholder="xxxx-xxxx-xxxx-xxxx"/>
+                                    {errors.card && <span className="text-xs text-red-500">{errors.card?.message}</span>}
                                 </div>
 
                                 <div>
                                     <label htmlFor="card-expiration-input"
-                                           className="mb-2 block text-sm font-medium text-gray-900"> Vencimiento de la tarjeta* </label>
+                                           className="mb-2 block text-sm font-medium text-gray-900"> Vencimiento de la tarjeta <span className="text-red-500">*</span> </label>
                                     <div className="relative">
                                         <div
                                             className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3.5">
@@ -109,27 +113,27 @@ export const ConfirmationView: FC<Props> = () => {
                                             </svg>
                                         </div>
                                         <InputMask
-                                            value={exp || ''}
-                                            onChange={(e) => setExp(e.target.value as string)}
-                                            className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 ps-9 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                            {...register("expDate", { required: true })}
+                                            className={`pl-8 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${errors.expDate && 'border-red-500'}`}
                                             mask="99/99"
                                             placeholder="MM/YY"/>
+                                            {errors.expDate && <span className="text-xs text-red-500">{errors.expDate?.message}</span>}
                                     </div>
                                 </div>
                                 <div>
                                     <label htmlFor="cvv-input"
-                                           className="mb-2 flex items-center gap-1 text-sm font-medium text-gray-900"> CVV*
+                                           className="mb-2 flex items-center gap-1 text-sm font-medium text-gray-900"> CVV <span className="text-red-500">*</span>
                                     </label>
                                     <InputMask
-                                        className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900"
-                                        value={ccv || ''}
-                                        onChange={(e) => setCcv(e.target.value as string)}
+                                        {...register("ccv", { required: true })}
+                                        className={`block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 ${errors.ccv && 'border-red-500'}`}
                                         mask="999"
-                                        placeholder="***" />
+                                        placeholder="***"/>
+                                    {errors.ccv && <span className="text-xs text-red-500">{errors.ccv?.message}</span>}
                                 </div>
                             </div>
 
-                        </form>
+                        </div>
 
                         <div className="mt-6 grow sm:mt-8 lg:mt-0">
                             <div
@@ -151,7 +155,7 @@ export const ConfirmationView: FC<Props> = () => {
                                 </dl>
                                 <div className="flex justify-between mt-8">
                                     <Button className="" onClick={handleCancel}>Cancelar</Button>
-                                    <Button className="" onClick={handleFinalize}>Completar pago</Button>
+                                    <input type="submit" className={`px-4 py-2 bg-blue-500 text-white rounded cursor-pointer`}/>
                                 </div>
                             </div>
 
@@ -168,6 +172,7 @@ export const ConfirmationView: FC<Props> = () => {
                             </div>
                         </div>
                     </div>
+                    </form>
                 </div>
             </div>
         </section>
