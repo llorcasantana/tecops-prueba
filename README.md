@@ -10,8 +10,8 @@ Puedes ver una demo en vivo del proyecto [aquí](https://tecopos-frontend-test.v
 
 ### Prerrequisitos
 
-- Node.js
-- Yarn o npm
+- Node.js >= 20
+- Yarn o npm (se recomienda usar Yarn)
 
 ### Instalación
 
