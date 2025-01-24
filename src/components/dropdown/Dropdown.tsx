@@ -15,7 +15,7 @@ export const Dropdown: FC<DropdownProps> = ({ label, children }) => {
     const onBlurDiv = () => {
         setTimeout(()=>{
                 setIsOpen(false);
-            }, 150)
+            }, 250)
         }
 
     return (

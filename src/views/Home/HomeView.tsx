@@ -1,28 +1,16 @@
 
-import {FC, ReactNode, useState, useEffect} from "react";
+import {FC, ReactNode} from "react";
 import {useProducts} from "../../hooks";
 import {CartItem} from "./CartItem.tsx";
 import {Dropdown} from "../../components/dropdown/Dropdown.tsx";
-import {IProduct} from "../../interfaces/apiResponse.ts";
 
 interface Props {
     children?: ReactNode
 }
 
 export const HomeView: FC<Props> = () => {
-    const {data} = useProducts()
-    const [filter, setFilter] = useState<string | null>(null);
-    const [categories, setCategories] = useState<string[]>([]);
-    const [searchQuery, setSearchQuery] = useState<string>("");
+    const {data, filteredProducts, setFilter, setSearchQuery, categories, searchQuery} = useProducts()
 
-    useEffect(() => {
-        if (data.status === 'SUCCESS') {
-            const uniqueCategories = data.data
-                .map((product: IProduct) => product.category)
-                .filter((category, index, self) => self.indexOf(category) === index);
-            setCategories(uniqueCategories);
-        }
-    }, [data]);
 
     if(data.status === 'LOADING'){
         return <p>CARGANDO...</p>
@@ -30,10 +18,6 @@ export const HomeView: FC<Props> = () => {
     if(data.status === 'ERROR'){
         return <p>ERROR</p>
     }
-    const filteredProducts: IProduct[] = data.data
-        .filter((product) => !filter || product.category === filter)
-        .filter((product) => product.title.toLowerCase().includes(searchQuery.toLowerCase()));
-
 
     return (
         <>
@@ -44,7 +28,7 @@ export const HomeView: FC<Props> = () => {
                             <Dropdown label="Filtros">
                                 <a onClick={() => setFilter(null)} href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all" role="menuitem" id="menu-item-0">Todos</a>
                                 {categories.map((category) => (
-                                    <a onClick={() => setFilter(category)} href="#" className="capitalize w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all" role="menuitem" key={category}>{category}</a>
+                                    <a onClick={() => {setFilter(category); console.log(category)}} href="#" className="capitalize w-full block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-all" role="menuitem" key={category}>{category}</a>
                                 ))}
 
                             </Dropdown>

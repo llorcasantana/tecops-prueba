@@ -4,14 +4,37 @@ interface IData{
     status:'SUCCESS' | 'ERROR' | 'LOADING';
     data:IProduct[]
 }
-export const useProducts = ():{data:IData,fetchData:()=>void} => {
+export const useProducts = ():{
+    data: IData;
+    fetchData: () => Promise<void>;
+    filteredProducts: IProduct[];
+    setFilter: (value: (((prevState: (string | null)) => (string | null)) | string | null)) => void;
+    setCategories: (value: (((prevState: string[]) => string[]) | string[])) => void;
+    setSearchQuery: (value: (((prevState: string) => string) | string)) => void;
+    categories: string[];
+    searchQuery: string;
+    filter: string | null
+} => {
     const [data, setData] = useState<IData>({
         status: 'LOADING',
         data:[]
     })
+    const [filter, setFilter] = useState<string | null>(null);
+    const [categories, setCategories] = useState<string[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>("");
+
+
     useEffect(() => {
         fetchData();
-    }, []);
+    });
+    useEffect(() => {
+        if (data.status === 'SUCCESS') {
+            const uniqueCategories = data.data
+                .map((product: IProduct) => product.category)
+                .filter((category, index, self) => self.indexOf(category) === index);
+            setCategories(uniqueCategories);
+        }
+    }, [data.data, data.status]);
     const fetchData =async ()=>{
         try{
             const request = await fetch('https://fakestoreapi.com/products');
@@ -36,6 +59,10 @@ export const useProducts = ():{data:IData,fetchData:()=>void} => {
         }
 
     }
-    return {data,fetchData};
+    const filteredProducts: IProduct[] = data.data
+        .filter((product) => !filter || product.category === filter)
+        .filter((product) => product.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    return {data,fetchData, filteredProducts, setFilter, setCategories, setSearchQuery, categories, searchQuery, filter};
 
 }

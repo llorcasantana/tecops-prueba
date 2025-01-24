@@ -11,9 +11,6 @@ interface Props {
 export const CartItem: FC<Props> = ({item}) => {
     const {addProductToCart} = useContext(ProductContext)
     const navigate = useNavigate();
-    const addToCart = () => {
-        addProductToCart(item)
-    }
     return (
             <div
                 className="transition-all rounded-lg border border-gray-200 relative group hover:border hover:border-gray-300 hover:radius-1 w-auto">
@@ -33,7 +30,7 @@ export const CartItem: FC<Props> = ({item}) => {
                     </div>
                 </div>
                 <div className="w-full sm:flex-1 grid gap-4 grid-cols-1 p-2">
-                    <Button onClick={addToCart}>Agregar al carrito</Button>
+                    <Button onClick={()=>addProductToCart(item)}>Agregar al carrito</Button>
                 </div>
             </div>
     );
