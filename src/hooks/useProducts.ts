@@ -27,14 +27,6 @@ export const useProducts = ():{
     useEffect(() => {
         fetchData();
     });
-    useEffect(() => {
-        if (data.status === 'SUCCESS') {
-            const uniqueCategories = data.data
-                .map((product: IProduct) => product.category)
-                .filter((category, index, self) => self.indexOf(category) === index);
-            setCategories(uniqueCategories);
-        }
-    }, [data.data, data.status]);
     const fetchData =async ()=>{
         try{
             const request = await fetch('https://fakestoreapi.com/products');
@@ -49,7 +41,7 @@ export const useProducts = ():{
                 status: 'SUCCESS',
                 data: nData,
             })
-
+            buildFilters(nData);
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
         }catch (e){
             setData({
@@ -58,6 +50,12 @@ export const useProducts = ():{
             })
         }
 
+    }
+    const buildFilters = (data:IProduct[]) => {
+        const uniqueCategories = data
+            .map((product: IProduct) => product.category)
+            .filter((category, index, self) => self.indexOf(category) === index);
+        setCategories(uniqueCategories);
     }
     const filteredProducts: IProduct[] = data.data
         .filter((product) => !filter || product.category === filter)
