@@ -4,7 +4,7 @@ Esta plantilla es para el uso del test de Frontend Developer de [TECOPOS](https:
 
 ## Demo
 
-Puedes ver una demo en vivo del proyecto [aquí](https://tecopos-frontend-test.vercel.app/).
+Puedes ver una demo en vivo del proyecto [aquí](https://tecops-prueba.vercel.app/).
 
 ## Configuración del Proyecto
 
